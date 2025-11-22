@@ -43,7 +43,11 @@ def run_indexing():
     new_docs = []
     for c in chunks:
         if c["id"] not in existing_ids:
-            new_docs.append(Document(page_content=c["text"], metadata=c["metadata"]))
+            # --- FIX: Inject 'id' into metadata so we can find it later ---
+            doc_metadata = c["metadata"]
+            doc_metadata["id"] = c["id"]
+            
+            new_docs.append(Document(page_content=c["text"], metadata=doc_metadata))
 
     if new_docs:
         print(f"Adding {len(new_docs)} new docs to FAISS...")
@@ -57,7 +61,13 @@ def run_indexing():
 
     # --- 2. BM25 (Full Rebuild) ---
     print("Updating BM25 index...")
-    all_docs = [Document(page_content=c["text"], metadata=c["metadata"]) for c in chunks]
+    # Ensure ID is in metadata for BM25 too (good practice)
+    all_docs = []
+    for c in chunks:
+        meta = c["metadata"]
+        meta["id"] = c["id"]
+        all_docs.append(Document(page_content=c["text"], metadata=meta))
+        
     bm25 = BM25Retriever.from_documents(all_docs)
     bm25.k = config.TOP_K_RETRIEVE
     
