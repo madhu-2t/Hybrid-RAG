@@ -1,0 +1,20 @@
+# Python System
+__pycache__/
+*.py[cod]
+venv/
+.env
+
+# Project Data (Don't upload PDFs or Embeddings)
+data/raw_pdfs/*
+!data/raw_pdfs/.gitkeep
+data/chunks.jsonl
+data/processed_state.json
+data/test_dataset.json
+
+# Generated Indexes
+faiss_index/
+bm25_retriever.pkl
+
+# IDE settings
+.vscode/
+.idea/
